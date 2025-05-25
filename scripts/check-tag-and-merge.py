@@ -6,10 +6,12 @@ import re
 import os
 from git import Repo
 
-def get_changed_files(repo, base_branch, pr_branch):
+def get_changed_files(repo, base_branch):
     repo.git.fetch('origin', base_branch)
-    diff = repo.git.diff('--name-only', f'origin/{base_branch}..{pr_branch}')
+    # Compare base branch to HEAD (which is the PR commit)
+    diff = repo.git.diff('--name-only', f'origin/{base_branch}...HEAD')
     return diff.strip().splitlines()
+
 
 def extract_version_from_cmake(filepath):
     with open(filepath, 'r') as f:
@@ -34,7 +36,7 @@ def main(pr_number):
     print(f"Base branch: {base_branch}")
     print(f"PR branch: {pr_branch}")
 
-    changed_files = get_changed_files(repo, base_branch, pr_branch)
+    changed_files = get_changed_files(repo, base_branch)
     print(f"Changed files: {changed_files}")
 
     if changed_files != ['CMakeLists.txt']:
