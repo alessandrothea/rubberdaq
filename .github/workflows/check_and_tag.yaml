@@ -29,4 +29,4 @@ jobs:
       - name: Run version merge & tag script
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python check-tag-and-merge.py ${{ github.event.pull_request.number }}
+        run: python scripts/check-tag-and-merge.py ${{ github.event.pull_request.number }}
