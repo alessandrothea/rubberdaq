@@ -1,0 +1,29 @@
+name: Check, tag and merge
+
+on:
+  workflow_call:
+    inputs:
+      pr_number:
+        required: true
+        type: string
+
+  auto-check-tag-merge:
+    if: contains(github.event.pull_request.labels.*.name, 'autotag')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required for diff comparisons
+  
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install GitPython
+        run: pip install gitpython
