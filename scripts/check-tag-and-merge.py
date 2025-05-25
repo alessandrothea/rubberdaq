@@ -101,7 +101,7 @@ def main(pr_number):
             sys.exit(1)
 
 
-        tag = create_git_tag(repo, tag_name, sha)
+        tag = create_git_tag(repo, tag_name, pr_head_sha)
         print(f"Successfully created tag: {tag}")
 
 
