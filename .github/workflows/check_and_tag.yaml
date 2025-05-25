@@ -29,9 +29,10 @@ jobs:
       - name: Run version merge & tag script
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: python scripts/check-tag-and-merge.py ${{ github.event.pull_request.number }}
 
-      - name: automerge
-        uses: "pascalgn/automerge-action@v0.16.4"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      # - name: automerge
+      #   uses: "pascalgn/automerge-action@v0.16.4"
+      #   env:
+      #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

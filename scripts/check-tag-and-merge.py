@@ -29,9 +29,9 @@ def check_tag_exists(repo, version):
     repo.git.fetch('--tags')
     return version in [t.name for t in repo.tags]
 
-def create_git_tag(repo: Repo, tag_name: str):
+def create_git_tag(repo: Repo, tag_name: str, sha:str):
     try:
-        return repo.create_tag(tag_name)
+        return repo.create_tag(tag_name, ref=sha)
     except GitCommandError as e:
         raise RuntimeError(f"Failed to create git tag: {e}")
 
@@ -67,6 +67,8 @@ def main(pr_number):
     repo = Repo(".")
     pr_branch = os.environ.get('GITHUB_HEAD_REF')
     base_branch = os.environ.get('GITHUB_BASE_REF')
+    pr_head_sha = os.environ.get('PR_HEAD_SHA')
+
 
     print(f"Base branch: {base_branch}")
     print(f"PR branch: {pr_branch}")
@@ -99,7 +101,7 @@ def main(pr_number):
             sys.exit(1)
 
 
-        tag = create_git_tag(repo, tag_name)
+        tag = create_git_tag(repo, tag_name, sha)
         print(f"Successfully created tag: {tag}")
 
 
