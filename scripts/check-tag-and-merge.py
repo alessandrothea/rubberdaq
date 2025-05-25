@@ -4,7 +4,7 @@
 import sys
 import re
 import os
-from git import Repo
+from git import Repo, GitCommandError
 
 def get_changed_files(repo, base_branch):
     repo.git.fetch('origin', base_branch)
@@ -25,9 +25,23 @@ def extract_version_from_cmake(filepath):
 def is_valid_version(version):
     return re.match(r'^v?\d+\.\d+\.\d+$', version) is not None
 
-def tag_exists(repo, version):
+def check_tag_exists(repo, version):
     repo.git.fetch('--tags')
     return version in [t.name for t in repo.tags]
+
+def create_git_tag(repo: Repo, tag_name: str):
+    try:
+        return repo.create_tag(tag_name)
+    except GitCommandError as e:
+        raise RuntimeError(f"Failed to create git tag: {e}")
+
+def push_git_tag(repo: Repo, tag_name: str):
+    try:
+        origin = repo.remote(name='origin')
+        origin.push(tag_name)
+        print(f"Successfully pushed tag: {tag_name}")
+    except GitCommandError as e:
+        raise RuntimeError(f"Failed to push git tag: {e}")
 
 def print_recent_tags(repo: Repo, count: int = 10):
     tags = sorted(
@@ -80,9 +94,16 @@ def main(pr_number):
 
         print_recent_tags(repo)
 
-        if tag_exists(repo, tag_name):
+        if check_tag_exists(repo, tag_name):
             print(f"Error: Tag {version} already exists!")
             sys.exit(1)
+
+
+        tag = create_git_tag(repo, tag_name)
+        print(f"Successfully created tag: {tag}")
+
+
+        push_git_tag(repo, tag_name)
 
         # print(f"Merging PR #{pr_number}...")
         # os.system(f"gh pr merge {pr_number} --merge --admin --delete-branch")
