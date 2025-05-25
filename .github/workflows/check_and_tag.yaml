@@ -32,8 +32,8 @@ jobs:
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: python scripts/check-tag-and-merge.py ${{ github.event.pull_request.number }}
 
-      - name: Merge PR with Action
-        uses: peter-evans/merge-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          merge_method: merge  # or squash, rebase
+      - name: Merge PR using GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --merge --admin --delete-branch
