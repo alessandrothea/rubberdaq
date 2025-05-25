@@ -1,11 +1,8 @@
 name: Check, tag and merge
 
 on:
-  workflow_call:
-    inputs:
-      pr_number:
-        required: true
-        type: string
+  pull_request:
+    types: [labeled, synchronize, reopened]
 
 jobs:
   auto-check-tag-merge:
