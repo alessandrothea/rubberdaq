@@ -28,8 +28,8 @@ def tag_exists(repo, version):
 
 def main(pr_number):
     repo = Repo(".")
-    pr_branch = repo.active_branch.name
-    base_branch = repo.git.rev_parse('origin/HEAD').split("/")[-1]
+    pr_branch = os.environ.get('GITHUB_HEAD_REF')
+    base_branch = os.environ.get('GITHUB_BASE_REF')
 
     print(f"Base branch: {base_branch}")
     print(f"PR branch: {pr_branch}")
