@@ -1,1 +1,1 @@
-project(dummyproject VERSION 1.0.2)
+project(dummyproject VERSION 1.0.1)
